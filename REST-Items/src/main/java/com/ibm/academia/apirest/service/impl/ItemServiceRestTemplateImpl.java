@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ItemServiceRestTemplateImpl implements ItemService {
@@ -23,7 +24,8 @@ public class ItemServiceRestTemplateImpl implements ItemService {
 
     @Override
     public List<Item> findAll() {
-        return null;
+        List<Producto> productos = List.of(restTemplate.getForObject(PRODUCTS_URL, Producto[].class));
+        return productos.stream().map(p -> new Item(p, 1)).collect(Collectors.toList());
     }
 
     @Override

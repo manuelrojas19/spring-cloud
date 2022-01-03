@@ -4,6 +4,7 @@ import com.ibm.academia.apirest.commons.models.Producto;
 import com.ibm.academia.apirest.entities.Item;
 import com.ibm.academia.apirest.service.ItemService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,7 +42,6 @@ public class ItemController {
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
 
-
     /**
      * Endpoint para recuperar los detalles del item
      *
@@ -52,19 +52,21 @@ public class ItemController {
     @GetMapping("/details/products/{productoId}/quantity/{quantity}")
     public ResponseEntity<Item> findDetails(@PathVariable Long productoId, @PathVariable Integer quantity) {
 //        return new ResponseEntity<>(itemService.findById(productoId, quantity), HttpStatus.OK);
-        return circuitBreakerFactory.create("items").run(
-                () -> new ResponseEntity<>(itemService.findById(productoId, quantity), HttpStatus.OK),
-                e -> altFindDetails(productoId, quantity, e));
+        return circuitBreakerFactory.create("items").run(() -> new ResponseEntity<>(itemService
+                .findById(productoId, quantity), HttpStatus.OK), e -> altFindDetails(productoId, quantity, e));
     }
 
-    @CircuitBreaker(name = "items")
+    @CircuitBreaker(name = "items", fallbackMethod = "altFindDetails2")
     @GetMapping("/details2/products/{productoId}/quantity/{quantity}")
-    public ResponseEntity<Item> findDetails2(@PathVariable Long productoId, @PathVariable Integer quantity) {
-//        return new ResponseEntity<>(itemService.findById(productoId, quantity), HttpStatus.OK);
-        return circuitBreakerFactory.create("items").run(
-                () -> new ResponseEntity<>(itemService.findById(productoId, quantity), HttpStatus.OK),
-                e -> altFindDetails(productoId, quantity, e)
-        );
+    public CompletableFuture<Item> findDetails2(@PathVariable Long productoId, @PathVariable Integer quantity) {
+        return CompletableFuture.supplyAsync(() -> itemService.findById(productoId, quantity));
+    }
+
+    @CircuitBreaker(name = "items", fallbackMethod = "altFindDetails2")
+    @TimeLimiter(name = "items")
+    @GetMapping("/details3/products/{productoId}/quantity/{quantity}}")
+    public CompletableFuture<Item> findDetails3(@PathVariable Long productoId, @PathVariable Integer quantity) {
+        return CompletableFuture.supplyAsync(() -> itemService.findById(productoId, quantity));
     }
 
     public ResponseEntity<Item> altFindDetails(Long productoId, Integer cantidad, Throwable e) {
