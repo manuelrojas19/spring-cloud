@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="zuul-server" />
+        <module name="REST-Products" />
+        <module name="REST-Items" />
+        <module name="eureka-server" />
+        <module name="commons" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="commons" target="11" />
+      <module name="eureka-server" target="11" />
+      <module name="REST-Items" target="11" />
+      <module name="REST-Products" target="11" />
+      <module name="zuul-server" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="REST-Items" options="-parameters" />
+      <module name="REST-Products" options="-parameters" />
+      <module name="commons" options="-parameters" />
+      <module name="eureka-server" options="-parameters" />
+      <module name="zuul-server" options="-parameters" />
+    </option>
+  </component>
+</project>

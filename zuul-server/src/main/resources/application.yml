@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: zuul-server
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+zuul:
+  routes:
+    items:
+      service-id: rest-items
+      path: /api/v1/items/**
+      strip-prefix: false
+    products:
+      service-id: rest-products
+      path: /api/v1/products/**
+      strip-prefix: false
