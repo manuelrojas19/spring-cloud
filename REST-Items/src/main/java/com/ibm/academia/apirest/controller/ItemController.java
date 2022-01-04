@@ -11,10 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -49,24 +46,41 @@ public class ItemController {
      * @author MARR - 10-12-2021
      */
 //    @HystrixCommand(fallbackMethod = "altFindDetails")
-    @GetMapping("/details/products/{productoId}/quantity/{quantity}")
+    @GetMapping("/details/productos/{productoId}/quantity/{quantity}")
     public ResponseEntity<Item> findDetails(@PathVariable Long productoId, @PathVariable Integer quantity) {
-//        return new ResponseEntity<>(itemService.findById(productoId, quantity), HttpStatus.OK);
         return circuitBreakerFactory.create("items").run(() -> new ResponseEntity<>(itemService
                 .findById(productoId, quantity), HttpStatus.OK), e -> altFindDetails(productoId, quantity, e));
     }
 
     @CircuitBreaker(name = "items", fallbackMethod = "altFindDetails2")
-    @GetMapping("/details2/products/{productoId}/quantity/{quantity}")
+    @GetMapping("/details2/productos/{productoId}/quantity/{quantity}")
     public CompletableFuture<Item> findDetails2(@PathVariable Long productoId, @PathVariable Integer quantity) {
         return CompletableFuture.supplyAsync(() -> itemService.findById(productoId, quantity));
     }
 
     @CircuitBreaker(name = "items", fallbackMethod = "altFindDetails2")
     @TimeLimiter(name = "items")
-    @GetMapping("/details3/products/{productoId}/quantity/{quantity}}")
+    @GetMapping("/details3/productos/{productoId}/quantity/{quantity}")
     public CompletableFuture<Item> findDetails3(@PathVariable Long productoId, @PathVariable Integer quantity) {
         return CompletableFuture.supplyAsync(() -> itemService.findById(productoId, quantity));
+    }
+
+    @PostMapping("/productos")
+    public ResponseEntity<Producto> saveProducto(@RequestBody Producto producto) {
+        Producto response = itemService.saveProducto(producto);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/productos/{productoId}")
+    public ResponseEntity<Producto> updateProducto(@RequestBody Producto producto, @PathVariable Long productoId) {
+        Producto response = itemService.updateProducto(producto, productoId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/productos/{productoId}")
+    public ResponseEntity<?> deleteProducto(@PathVariable Long productoId) {
+        itemService.deleteProducto(productoId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     public ResponseEntity<Item> altFindDetails(Long productoId, Integer cantidad, Throwable e) {

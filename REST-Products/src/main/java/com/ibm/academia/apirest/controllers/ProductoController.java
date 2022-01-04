@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class ProductoController {
 
     @Autowired
-    ProductoService productoService;
+    private ProductoService productoService;
 
     @GetMapping
     public ResponseEntity<List<Producto>> findAll() {

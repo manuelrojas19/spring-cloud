@@ -9,6 +9,6 @@ public interface ItemService {
     List<Item> findAll();
     Item findById(Long id, Integer cantidad);
     Producto saveProducto(Producto producto);
-    Producto updateProducto(Producto producto, Long idProducto);
-    void deleteProducto(Long idProducto);
+    Producto updateProducto(Producto producto, Long productoId);
+    void deleteProducto(Long productoId);
 }

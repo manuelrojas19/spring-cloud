@@ -1,6 +1,6 @@
 package com.ibm.academia.apirest.service.impl;
 
-import com.ibm.academia.apirest.clients.ProductoClientRest;
+import com.ibm.academia.apirest.clients.ProductoRestClient;
 import com.ibm.academia.apirest.commons.models.Producto;
 import com.ibm.academia.apirest.entities.Item;
 import com.ibm.academia.apirest.service.ItemService;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class ItemServiceFeignImpl implements ItemService {
 
     @Autowired
-    private ProductoClientRest client;
+    private ProductoRestClient client;
 
     @Override
     public List<Item> findAll() {
@@ -36,12 +36,12 @@ public class ItemServiceFeignImpl implements ItemService {
     }
 
     @Override
-    public Producto updateProducto(Producto producto, Long id) {
-        return client.update(producto, id);
+    public Producto updateProducto(Producto producto, Long productoId) {
+        return client.update(producto, productoId);
     }
 
     @Override
-    public void deleteProducto(Long idProducto) {
-        client.delete(idProducto);
+    public void deleteProducto(Long productoId) {
+        client.delete(productoId);
     }
 }

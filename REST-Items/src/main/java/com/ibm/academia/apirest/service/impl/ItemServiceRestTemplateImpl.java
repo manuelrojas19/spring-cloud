@@ -42,9 +42,9 @@ public class ItemServiceRestTemplateImpl implements ItemService {
     }
 
     @Override
-    public Producto updateProducto(Producto producto, Long idProducto) {
+    public Producto updateProducto(Producto producto, Long productoId) {
         Map<String, String> variables = new HashMap<>();
-        variables.put("idProducto", idProducto.toString());
+        variables.put("idProducto", productoId.toString());
 
         HttpEntity<Producto> request = new HttpEntity<>(producto);
         ResponseEntity<Producto> response = restTemplate
@@ -53,9 +53,9 @@ public class ItemServiceRestTemplateImpl implements ItemService {
     }
 
     @Override
-    public void deleteProducto(Long idProducto) {
+    public void deleteProducto(Long productoId) {
         Map<String, String> variables = new HashMap<>();
-        variables.put("id", idProducto.toString());
+        variables.put("id", productoId.toString());
 
         restTemplate.delete(PRODUCTS_URL + "/{id}", variables);
     }
